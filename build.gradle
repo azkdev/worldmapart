@@ -2,7 +2,7 @@ buildscript {
     ext {
         kotlin_version = '1.2.21'
         processing_version = '3.3.6'
-        jbox2d_version = '2.2.1.1'
+        jackson_version = '2.9.0'
     }
     repositories {
         mavenCentral()
@@ -23,9 +23,10 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     compile "org.processing:core:$processing_version"
-    compile "org.jbox2d:jbox2d-library:$jbox2d_version"
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version"
 }
 
 compileKotlin {
