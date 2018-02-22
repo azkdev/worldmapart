@@ -11,6 +11,8 @@ class WorldMapArt: PApplet() {
     private lateinit var mapper: ObjectMapper
     private lateinit var cities: ArrayList<DataCity>
     private lateinit var drawableCities: ArrayList<City>
+    private lateinit var countries: ArrayList<String>
+    private lateinit var colors: ArrayList<Int>
 
     override fun settings() {
         size(Constants.CW.toInt(), Constants.CH.toInt())
@@ -21,8 +23,14 @@ class WorldMapArt: PApplet() {
         mapper = jacksonObjectMapper()
         cities = mapper.readValue(FileInputStream(this.javaClass.getResource("/data/city.list.json").file))
         drawableCities = arrayListOf()
+        countries = arrayListOf()
+        colors = arrayListOf()
         cities.forEach {
-            val city = City(it)
+            if (!countries.contains(it.country)) {
+                countries.add(it.country)
+                colors.add(color(random(255F), random(255F), random(255F)))
+            }
+            val city = City(it, colors[countries.indexOf(it.country)])
             drawableCities.add(city)
             city.draw()
         }
@@ -32,19 +40,28 @@ class WorldMapArt: PApplet() {
 
     }
 
-    inner class City(
-            val id: Int,
-            val name: String,
-            val country: String,
-            val coord: Coord
-    ) {
+    inner class City {
 
-        constructor(dataCity: DataCity) : this(dataCity.id, dataCity.name, dataCity.country, dataCity.coord)
+        private val id: Int
+        private val name: String
+        private val country: String
+        private val coord: Coord
+        private val color: Int
+
+        var r: Float = 1F
+
+        constructor(dataCity: DataCity, color: Int) {
+            id = dataCity.id
+            name = dataCity.name
+            country = dataCity.country
+            coord = dataCity.coord
+            this.color = color
+        }
 
         fun draw() {
             noStroke()
-            fill(255F, 0F, 0F)
-            ellipse(coord.lon, coord.lat, 2F, 2F)
+            fill(color)
+            ellipse((coord.lon * 4 + Constants.CW * .5).toFloat(), (coord.lat * -4 + Constants.CH * .5).toFloat(), r, r)
         }
 
     }
